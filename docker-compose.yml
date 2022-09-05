@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  app:
+    build: ./
+    container_name: alkemy-challenge
+    volumes:
+      - .:/app
+    environment:
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASS}@alchemy-db:${DB_PORT}/${DB_NAME}
+    depends_on:
+      - alchemy-db
+  
+  alchemy-db:
+    image: postgres:14.4
+    container_name: alkemy-db
+    expose:
+      - "5432"
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    restart: always
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_DB=${DB_NAME}
+    volumes:
+      - challenge_data:/var/lib/postgresql/data/
+
+volumes:
+  challenge_data:
